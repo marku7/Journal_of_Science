@@ -12,11 +12,13 @@ class Volume_model extends CI_Model {
     public function getVolumeById($volumeid) {
         return $this->db->get_where('Volume', array('volumeid' => $volumeid))->row();
     }
+        
 
     public function updateVolume($volumeid, $data) {
         $this->db->where('volumeid', $volumeid);
         return $this->db->update('Volume', $data);
     }
+    
 
     public function deleteVolume($volumeid) {
         // Delete the volume from the database
@@ -29,9 +31,16 @@ class Volume_model extends CI_Model {
     }
 
     public function getVolumes() {
+        $this->db->where('isArchive', 0);
+        $this->db->where('published', 1);
         return $this->db->get('Volume')->result_array();
     }
 
+    public function get_volume($volumeid) {
+        $query = $this->db->get_where('volume', array('volumeid' => $volumeid, 'isArchive' => 0));
+        return $query->row_array();
+    }    
+    
     public function updatePublishedStatus($volumeid, $published) {
         // Determine the value for date_published based on the published status
         $date_published = $published == 1 ? date('Y-m-d H:i:s') : null;
@@ -46,7 +55,17 @@ class Volume_model extends CI_Model {
         $this->db->update('Volume', $data);
     }
     
-
+    public function archiveVolume($volumeid) {
+        $this->db->where('volumeid', $volumeid);
+        $this->db->update('volume', array('isArchive' => 1));
     
-
+        return $this->db->affected_rows() > 0;
+    }
+    
+    public function unArchiveVolume($volumeid) {
+        $this->db->where('volumeid', $volumeid);
+        $this->db->update('volume', array('isArchive' => 0));
+    
+        return $this->db->affected_rows() > 0;
+    }
 }

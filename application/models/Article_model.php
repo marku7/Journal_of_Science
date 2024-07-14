@@ -16,13 +16,8 @@ class Article_model extends CI_Model {
         $this->db->join('authors', 'article_author.audid = authors.audid');
         $this->db->where('article_author.articleid', $articleId);
         $query = $this->db->get();
-        // Log the query result
-        error_log('Query Result for Article ID ' . $articleId . ': ' . print_r($query->row(), true));
         return $query->row(); // Assuming you're expecting only one author per article
     }
-    
-    
-    
 
     public function insertArticleAuthor($article_id, $author_id) {
         $data = array(
@@ -46,7 +41,6 @@ class Article_model extends CI_Model {
         return $query->result();
     }
  
-    
 public function get_article_id() {
     
     $query = $this->db->query("SELECT articleid FROM articles ORDER BY created_at DESC LIMIT 1"); 
@@ -57,22 +51,45 @@ public function get_article_id() {
         return null; 
     }
 }
+public function get_articles_by_volume($volumeid) {
+    $this->db->select('articles.*, volume.vol_name');
+    $this->db->from('articles');
+    $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left');
+    $this->db->where('articles.volumeid', $volumeid);
+    $this->db->where('articles.isArchived', 0);
+    $this->db->where('volume.isArchive', 0);
+    $query = $this->db->get();
+    return $query->result_array();
+}
+
+
 public function get_article() {
-    $this->db->select('articles.articleid, articles.title, articles.slug, articles.abstract, articles.created_at, volume.vol_name, articles.doi, articles.keywords');
+    $this->db->select('
+        articles.articleid, 
+        articles.title, 
+        articles.slug, 
+        articles.abstract, 
+        articles.created_at, 
+        volume.vol_name,
+        volume.volumeid,
+        articles.doi, 
+        articles.keywords
+    ');
     $this->db->from('articles');
     $this->db->join('article_submission', 'articles.slug = article_submission.slug');
     $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left');
+    $this->db->where('articles.isArchived', 0);
+    $this->db->where('volume.isArchive', 0);
     $this->db->where('volume.published', 1);
     $this->db->where('article_submission.payment', 1);
     $this->db->where('article_submission.review', 1);
     $this->db->where('article_submission.approved', 1);
     $this->db->where('article_submission.published', 1);
-    $this->db->order_by('volume.vol_name', 'ASC'); // Order by volume.vol_name in ascending order
+    $this->db->order_by('volume.vol_name', 'ASC'); 
 
     $query = $this->db->get();
     return $query->result(); 
 }
-
 
 
 public function get_article_slug($slug) {
@@ -83,8 +100,6 @@ public function get_article_slug($slug) {
     $query = $this->db->get();
     return $query->result(); 
 }
-
-
 
 public function get_latest_article() {
     $this->db->select('*');
@@ -101,34 +116,39 @@ public function get_latest_article() {
 }
 
 public function delete_article($articleid) {
-    // Delete entries from the article_author table associated with the given articleid
     $this->db->where('articleid', $articleid);
     $this->db->delete('article_author');
 
-    // Now, delete the article itself
     $this->db->where('articleid', $articleid);
     $this->db->delete('articles');
 
-    // Return TRUE if deletion is successful, otherwise FALSE
-    return TRUE; // Or return $this->db->affected_rows() > 0; if you want to check the number of affected rows
+    return TRUE;
+}
+
+public function archiveArticle($articleid) {
+    $this->db->where('articleid', $articleid);
+    $this->db->update('articles', array('isArchived' => 1));
+
+    return $this->db->affected_rows() > 0;
+}
+
+
+public function unArchiveArticle($articleid) {
+    $this->db->where('articleid', $articleid);
+    $this->db->update('articles', array('isArchived' => 0));
+
+    return $this->db->affected_rows() > 0;
 }
 
 public function deleteArticle($articleId) {
-    // Perform the database operation to delete the article
     $this->db->where('articleid', $articleid);
     $this->db->delete('article_author');
 
-    // Now, delete the article itself
     $this->db->where('articleid', $articleid);
     $this->db->delete('articles');
 
-    // Return TRUE if deletion is successful, otherwise FALSE
-    return TRUE; // Or return $this->db->affected_rows() > 0; if you want to check the number of affected rows
+    return TRUE; 
 }
-
-
-
-// In Article_model.php
 
 public function getSubmittedArticlesByUserId($user_id) {
     $this->db->select('articles.*, authors.author_name'); // Assuming you want to fetch article data and author names
@@ -141,25 +161,15 @@ public function getSubmittedArticlesByUserId($user_id) {
     return $query->result();
 }
 
-
-
-
 public function getArticle() {
     $query = $this->db->get('articles');
     return $query->result();
 }
 
-
-
-// Model: Article_model.php
 public function updateArticle($data, $slug) {
     $this->db->where('slug', $slug);
     $this->db->update('articles', $data);
-
-    
 }
-
-
 
 public function get_article_by_id($articleid) {
     $this->db->select('articles.articleid, articles.title, article_submission.filename, article_submission.payment, article_submission.date_paid, article_submission.review, article_submission.date_forwarded_review, article_submission.approved, article_submission.date_approved, article_submission.published, article_submission.date_published');
@@ -231,18 +241,40 @@ public function update_article_submission($articleid, $articleData) {
     }
 }
 
-
 public function get_all_articles() {
-    $this->db->select('articles.articleid, articles.title, articles.keywords, articles.abstract, articles.filename, article_submission.filename AS submission_filename, article_submission.payment, article_submission.date_paid, article_submission.review, article_submission.date_forwarded_review, article_submission.approved, article_submission.date_approved, article_submission.layout, article_submission.published, article_submission.date_published, article_submission.slug, authors.author_name, authors.email AS author_email, volume.vol_name AS volume_name'); // Include volume name
+    $this->db->select('
+        articles.articleid, 
+        MAX(articles.title) AS title, 
+        MAX(articles.keywords) AS keywords, 
+        MAX(articles.abstract) AS abstract, 
+        MAX(articles.filename) AS filename, 
+        MAX(article_submission.filename) AS submission_filename, 
+        MAX(article_submission.payment) AS payment, 
+        MAX(article_submission.date_paid) AS date_paid, 
+        MAX(article_submission.review) AS review, 
+        MAX(article_submission.date_forwarded_review) AS date_forwarded_review, 
+        MAX(article_submission.approved) AS approved, 
+        MAX(article_submission.date_approved) AS date_approved, 
+        MAX(article_submission.layout) AS layout, 
+        MAX(article_submission.published) AS published, 
+        MAX(article_submission.date_published) AS date_published, 
+        MAX(article_submission.slug) AS slug, 
+        MAX(authors.author_name) AS author_name, 
+        MAX(authors.email) AS author_email, 
+        MAX(volume.vol_name) AS volume_name,
+        MAX(articles.isArchived) AS isArchived
+    ');
     $this->db->from('articles');
     $this->db->join('article_author', 'articles.articleid = article_author.articleid');
     $this->db->join('authors', 'article_author.audid = authors.audid');
     $this->db->join('article_submission', 'articles.slug = article_submission.slug');
     $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left'); // Assuming volumeid is the foreign key
+    $this->db->where('volume.isArchive', 0); // Filter to get only articles with volumeid having isArchive as 0
     $this->db->group_by('articles.articleid'); 
     $query = $this->db->get();
     return $query->result();
 }
+
 
 public function searchArticles($searchQuery) {
     $this->db->like('title', $searchQuery);

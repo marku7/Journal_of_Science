@@ -60,7 +60,7 @@
             <thead>
                 <tr>
                     <th>Volume ID</th>
-                    <th>Status</th>
+                    <th>Actions</th>
                     <th>Volume Name</th>
                     <th>Description</th>
                     <th>Date Created</th>
@@ -78,15 +78,20 @@
                                     <option value="1" <?php echo $volume->published ? 'selected' : ''; ?>>Published</option>
                                     <option value="0" <?php echo !$volume->published ? 'selected' : ''; ?>>Unpublished</option>
                                 </select>
-                            </form>
+                            </form><br>
+
+                            <?php if ($volume->isArchive == 0): ?>
+                            <a href="<?= base_url('pages/archiveVolume/' . $volume->volumeid); ?>" class="btn btn-danger" style="background-color: #FFCA2C; border-color: #FFCA2C;">Archive</a><br><br>
+                            <?php else: ?>
+                            <a href="<?= base_url('pages/unArchiveVolume/' . $volume->volumeid); ?>" class="btn btn-danger" style="background-color: #31D2F2; border-color: #31D2F2;">Unarchive</a><br><br>
+                            <?php endif; ?>
                         </td>
                         <td><?php echo $volume->vol_name; ?></td>
                         <td><?php echo $volume->description; ?></td>
                         <td><?php echo $volume->date_at; ?></td>
                         <td><?php echo $volume->date_published; ?></td>
                         <td>
-                            
-                            <a href="<?php echo base_url('volume/db_editVolume/' . $volume->volumeid); ?>" class="btn btn-edit btn-sm">Edit</a>
+                            <a href="<?php echo base_url('volume/db_editVolume/' . $volume->volumeid); ?>" class="btn btn-edit btn-sm">Edit</a><br>
                             <a href="<?php echo base_url('volume/delete/' . $volume->volumeid); ?>" class="btn btn-delete btn-sm" onclick="return confirm('Are you sure you want to delete this volume?')">Delete</a>
                         </td>
                     </tr>

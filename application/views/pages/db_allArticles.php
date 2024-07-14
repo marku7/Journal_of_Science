@@ -126,6 +126,12 @@
                     <td class="actions">
                         <a href="<?= base_url('pages/db_AdminUpdate/' . $article->slug); ?>" class="btn-assign-evaluator">Edit</a><br><br>
                         <a href="<?= base_url('pages/editArticle/' . $article->articleid); ?>" class="btn-update" style="background-color: #28a745; border-color: #28a745;">Update</a><br><br>
+                        <?php if ($article->isArchived == 0): ?>
+                            <a href="<?= base_url('pages/archiveArticle/' . $article->articleid); ?>" class="btn btn-danger" style="background-color: #FFCA2C; border-color: #FFCA2C;">Archive</a><br><br>
+                        <?php else: ?>
+                            <a href="<?= base_url('pages/unArchiveArticle/' . $article->articleid); ?>" class="btn btn-danger" style="background-color: #31D2F2; border-color: #31D2F2;">Unarchive</a><br><br>
+                        <?php endif; ?>
+
                         <a href="#" onclick="confirmDelete('<?= $article->articleid; ?>')" class="btn btn-danger btn-delete" style="background-color: #dc3545; border-color: #dc3545;">Delete</a>
                     </td>
                     <td><?= $article->author_name ?></td>

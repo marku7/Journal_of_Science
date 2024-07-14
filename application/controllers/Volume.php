@@ -20,7 +20,8 @@ class Volume extends CI_Controller {
             $data = array(
                 'vol_name' => $this->input->post('vol_name'),
                 'description' => $this->input->post('description'),
-                'published' => 0 // Set default value of 'published' to 0
+                'published' => 0,
+                'isArchive' => 0
             );
     
             // Call the model to insert data into the database
@@ -30,7 +31,6 @@ class Volume extends CI_Controller {
             redirect('volume/db_Volumes');
         }
     }
-    
  
     public function update($volumeid) {
         $this->form_validation->set_rules('vol_name', 'Volume Name', 'required');
@@ -50,8 +50,6 @@ class Volume extends CI_Controller {
         }
     }
 
-
-
     public function toggle_published($volumeid) {
         // Get the current published status from the database
         $volume = $this->Volume_model->getVolumeById($volumeid);
@@ -65,7 +63,6 @@ class Volume extends CI_Controller {
         // Redirect back to the volume list
         redirect('volume/db_Volumes');
     }
-    
 
     public function db_Volumes() {
         // Display list of volumes
@@ -95,14 +92,10 @@ class Volume extends CI_Controller {
         $this->load->view('templates/footerAdmin', $data);
     }
     
-
-
     public function delete($volumeid) {
         // Delete the volume from the database
         $this->Volume_model->deleteVolume($volumeid);
         // Redirect back to the volume list
         redirect('volume/db_Volumes');
     }
-    
-
 }

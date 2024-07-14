@@ -8,8 +8,11 @@ class Home extends CI_Controller {
         $this->load->model('User_model'); 
         $this->load->model('Article_model');
         $this->load->model('Author_model');
+        $this->load->model('Volume_model');
     }
     public function index() {
+        $data['articleData'] = $this->Article_model->get_all_articles();
+        $data['volumes'] = $this->Volume_model->getVolumes();
         // Retrieve article data
         $articleData = $this->Article_model->get_article();
     
@@ -26,8 +29,6 @@ class Home extends CI_Controller {
         $this->load->view('home/home', $data);
     }
     
-    
-    
     public function about() {
         $this->load->view('home/about');
     }
@@ -35,6 +36,31 @@ class Home extends CI_Controller {
     public function contact() {
         $this->load->view('home/contact');
     }
+
+    public function viewVolume($volumeid) {
+        $this->load->model('Article_model');
+        $this->load->model('Volume_model');
+        
+        $data['volume'] = $this->Volume_model->get_volume($volumeid);
+        if (empty($data['volume'])) {
+            show_404();
+        }
+    
+        $data['articles'] = $this->Article_model->get_articles_by_volume($volumeid);
+    
+        // Loop through each article data to fetch author's name and add it to the article data
+        if (!empty($data['articles'])) {
+            foreach ($data['articles'] as &$article) {
+                $authorData = $this->Article_model->getAuthorByArticleId($article['articleid']);
+                $article['author_name'] = $authorData ? $authorData->author_name : 'Unknown Author';
+            }
+        }
+    
+        $data['title'] = $data['volume']['vol_name'];
+    
+        $this->load->view('home/volume', $data);
+    }
+    
 
     public function post($slug = NULL) {
         if ($slug) {
@@ -158,36 +184,37 @@ public function post_admin($slug = NULL) {
 
 
 
-    public function home_lp() {
-        $userLoginSession = $this->session->userdata('UserLoginSession');
-        
-        if (!is_null($userLoginSession) && isset($userLoginSession['userid'])) {
-            $user_id = $userLoginSession['userid'];
-            $userData = $this->User_model->select_user_by_id($user_id);
+  public function home_lp() {
+    $userLoginSession = $this->session->userdata('UserLoginSession');
     
-            // Retrieve article data
-            $articleData = $this->Article_model->get_article();
-    
-            // Loop through each article data to fetch author's name and add it to the article data
-            if (!empty($articleData)) {
-                foreach ($articleData as $article) {
-                    $authorData = $this->Article_model->getAuthorByArticleId($article->articleid);
-                    // Ensure that $authorData is not null before accessing its properties
-                    $article->author_name = $authorData ? $authorData->author_name : 'Unknown Author';
-                }
+    if (!is_null($userLoginSession) && isset($userLoginSession['userid'])) {
+        $user_id = $userLoginSession['userid'];
+        $userData = $this->User_model->select_user_by_id($user_id);
+
+        // Retrieve article data
+        $articleData = $this->Article_model->get_article();
+
+        // Loop through each article data to fetch author's name and add it to the article data
+        if (!empty($articleData)) {
+            foreach ($articleData as $article) {
+                $authorData = $this->Article_model->getAuthorByArticleId($article->articleid);
+                // Ensure that $authorData is not null before accessing its properties
+                $article->author_name = $authorData ? $authorData->author_name : 'Unknown Author';
             }
-    
-            $data['articleData'] = $articleData;
-            $data['userData'] = $userData;
-            $this->load->view('home/home_lp', $data);
-        } else {
-            log_message('error', 'UserLoginSession is not set or does not contain userid.');
-            // Redirect to a login page or show an appropriate message
-            redirect('login'); // Adjust this to the appropriate login URL
-            // Or alternatively, show a custom error message
-            // echo "Please log in to access this page.";
         }
+
+        // Logging for debugging
+        log_message('debug', 'Article Data: ' . print_r($articleData, true));
+
+        $data['articleData'] = $articleData;
+        $data['userData'] = $userData;
+        $this->load->view('home/home_lp', $data);
+    } else {
+        log_message('error', 'UserLoginSession is not set or does not contain userid.');
+        redirect('login');
     }
+}
+
 
     
     public function home_admin() {

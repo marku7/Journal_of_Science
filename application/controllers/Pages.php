@@ -63,13 +63,32 @@ class Pages extends Base_Controller {
         $this->load->view('edit_author', $data);
     }
      
-    // Method to delete an article
     public function delete($articleid) {
-        // Call a method from the model to delete the article
         $this->Article_model->delete_article($articleid);
         redirect('articles/db_allArticles');
     }
     
+    public function archiveArticle($articleid) {
+        $this->Article_model->archiveArticle($articleid);
+        redirect('pages/db_allArticles');
+    }
+
+    public function unArchiveArticle($articleid) {
+        $this->Article_model->unArchiveArticle($articleid);
+        redirect('pages/db_allArticles');
+    }
+
+    public function archiveVolume($volumeid) {
+        $this->load->model('Volume_model');
+        $this->Volume_model->archiveVolume($volumeid);
+        redirect('volume/db_Volumes');
+    }   
+
+    public function unArchiveVolume($volumeid) {
+        $this->load->model('Volume_model');
+        $this->Volume_model->unArchiveVolume($volumeid);
+        redirect('volume/db_Volumes');
+    }
 
     public function db_AuthorProf($page = 'db_AuthorProf') {
         $user_id = $this->session->userdata('UserLoginSession')['userid'] ?? null;
