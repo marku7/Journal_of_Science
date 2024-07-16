@@ -37,6 +37,24 @@ class Home extends CI_Controller {
         $this->load->view('home/contact');
     }
 
+    public function archive() {
+        $articleData = $this->Article_model->get_archive();
+    
+        if (!empty($articleData)) {
+            foreach ($articleData as $article) {
+                $authorData = $this->Article_model->getAuthorByArticleId($article->articleid);
+                $article->author_name = $authorData ? $authorData->author_name : 'Unknown Author';
+            }
+        }
+    
+        $volumes = $this->Volume_model->getArchivedVolumes();
+    
+        $data['articleData'] = $articleData; 
+        $data['volumes'] = $volumes;
+        $this->load->view('home/archive', $data);
+    }
+    
+
     public function viewVolume($volumeid) {
         $this->load->model('Article_model');
         $this->load->model('Volume_model');

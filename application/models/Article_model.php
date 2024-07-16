@@ -32,11 +32,11 @@ class Article_model extends CI_Model {
     }
 
     public function get_articles_with_authors() {
-        $this->db->select('articles.*, authors.author_name, volume.volname AS volume_name'); // Include volume name
+        $this->db->select('articles.*, authors.author_name, volume.volname AS volume_name'); 
         $this->db->from('articles');
         $this->db->join('article_author', 'articles.articleid = article_author.article_id');
         $this->db->join('authors', 'article_author.audid = authors.audid');
-        $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left'); // Assuming volumeid is the foreign key
+        $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left'); 
         $query = $this->db->get();
         return $query->result();
     }
@@ -90,6 +90,40 @@ public function get_article() {
     $query = $this->db->get();
     return $query->result(); 
 }
+
+public function get_archive() {
+    $this->db->select('
+        articles.articleid, 
+        articles.title, 
+        articles.slug, 
+        articles.abstract, 
+        articles.created_at, 
+        volume.vol_name,
+        volume.volumeid,
+        articles.doi, 
+        articles.keywords
+    ');
+    $this->db->from('articles');
+    $this->db->join('article_submission', 'articles.slug = article_submission.slug');
+    $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left');
+    $this->db->where('volume.isArchive', 1);
+    $this->db->order_by('volume.vol_name', 'ASC'); 
+
+    $query = $this->db->get();
+    return $query->result(); 
+}
+
+public function getArchivedVolumes() {
+    $this->db->select('volumeid, vol_name');
+    $this->db->from('volume');
+    $this->db->where('isArchive', 1);
+    $this->db->order_by('vol_name', 'ASC'); 
+
+    $query = $this->db->get();
+    return $query->result_array(); 
+}
+
+
 
 
 public function get_article_slug($slug) {

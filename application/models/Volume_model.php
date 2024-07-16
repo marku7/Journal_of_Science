@@ -12,8 +12,18 @@ class Volume_model extends CI_Model {
     public function getVolumeById($volumeid) {
         return $this->db->get_where('Volume', array('volumeid' => $volumeid))->row();
     }
-        
 
+    public function getArchivedVolumes() {
+        $this->db->select('volumeid, vol_name');
+        $this->db->from('volume');
+        $this->db->where('isArchive', 1);
+        $this->db->order_by('vol_name', 'ASC'); 
+    
+        $query = $this->db->get();
+        return $query->result_array(); 
+    }
+    
+        
     public function updateVolume($volumeid, $data) {
         $this->db->where('volumeid', $volumeid);
         return $this->db->update('Volume', $data);
@@ -35,6 +45,7 @@ class Volume_model extends CI_Model {
         $this->db->where('published', 1);
         return $this->db->get('Volume')->result_array();
     }
+
 
     public function get_volume($volumeid) {
         $query = $this->db->get_where('volume', array('volumeid' => $volumeid, 'isArchive' => 0));

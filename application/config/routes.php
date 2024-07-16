@@ -8,6 +8,7 @@ $route['contact'] = 'home/contact';
 $route['post'] = 'home/post';
 $route['about'] = 'home/about';
 $route['volume'] = 'home/volume';
+$route['archive'] = 'home/archive';
 
 // Routes for logged-in users
 $route['home_lp'] = 'home/home_lp';
