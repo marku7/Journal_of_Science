@@ -112,14 +112,13 @@
                 <th>Volume</th>
                 <th>Title</th>
                 <th>File</th>
-                <th>Status</th>
                 <th>Date Published</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td class="actions-add">
-                    <a href="<?php echo base_url('pages/db_authSubmission2') ?>" class="btn btn-darkgreen text-blue" target="_blank"><strong>ADD ARTICLE</strong></a>
+                    <a href="<?php echo base_url('pages/db_authSubmission2') ?>" class="btn btn-darkgreen text-blue"><strong>ADD ARTICLE</strong></a>
                 </td>
             </tr>
             <?php foreach ($submittedArticles as $article): ?>
@@ -128,9 +127,9 @@
                         <a href="<?= base_url('pages/db_AdminUpdate/' . $article->slug); ?>"><i class="fa fa-pencil-square-o" aria-hidden="true" title="Edit Article"></i></a>
                         <a href="<?= base_url('pages/editArticle/' . $article->articleid); ?>"></a>
                         <?php if ($article->isPublished == 0): ?>
-                            <a href="<?= base_url('pages/publishArticle/' . $article->articleid); ?>"><i class="fa fa-toggle-on" aria-hidden="true" title="Unpublish Article" style="font-size: 24px;"></i></a>
+                            <a href="<?= base_url('pages/publishArticle/' . $article->articleid); ?>"><i class="fa fa-toggle-off" aria-hidden="true" title="Publish Article" style="font-size: 24px;"></i></a>
                             <?php else: ?>
-                            <a href="<?= base_url('pages/unPublishArticle/' . $article->articleid); ?>"><i class="fa fa-toggle-off" aria-hidden="true" title="Publish Article" style="font-size: 24px;"></i></a>
+                            <a href="<?= base_url('pages/unPublishArticle/' . $article->articleid); ?>"><i class="fa fa-toggle-on" aria-hidden="true" title="Unpublish Article" style="font-size: 24px;"></i></a>
                             <?php endif; ?>
                         <a href="#" onclick="confirmDelete('<?= $article->articleid; ?>')"><i class="fa fa-trash" aria-hidden="true" title="Delete Article"></i></a>
                     </td>
@@ -144,7 +143,6 @@
                             No file uploaded
                         <?php endif; ?>
                     </td>
-                    <td><?= $article->published ? 'Published' : 'Unpublished' ?></td>
                     <td><?= $article->date_published ? date('Y-m-d', strtotime($article->date_published)) : 'N/A' ?></td>
                 </tr>
             <?php endforeach; ?>

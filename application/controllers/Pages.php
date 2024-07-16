@@ -39,7 +39,7 @@ class Pages extends Base_Controller {
             $info['userData'] = $userData;
     
             // Fetch articles and pass them to the view
-            $info['submittedArticles'] = $this->Article_model->get_all_articles();
+            $info['submittedArticles'] = $this->Article_model->get_admin_articles();
     
             $this->load_view2('db_allArticles', $info);
         } else {
@@ -342,6 +342,8 @@ class Pages extends Base_Controller {
                                 'abstract' => $abstract,
                                 'filename' => $user_filename,
                                 'doi' => $doi,
+                                'isPublished' => 0,
+                                'isArchived' => 0
                             );
     
                             $this->load->model('Article_model');
