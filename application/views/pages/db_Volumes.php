@@ -3,6 +3,10 @@
 <head>
     <title>List of Volumes</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+          crossorigin="anonymous"/>
     <style>
         body {
             background-color: #f8f9fa;
@@ -51,6 +55,19 @@
         .btn-delete:hover {
             background-color: #c82333;
         }
+        .action-links a {
+            text-decoration: none;
+            margin-right: 5px;
+            padding: 6px 12px;
+            border: 1px solid #0056B3;
+            border-radius: 3px;
+            background-color: #0056B3;
+            color: #fff;
+        }
+        .action-links a:hover {
+            background-color: #343A40;
+            border-color: #343A40;
+        }
     </style>
 </head>
 <body>
@@ -74,25 +91,25 @@
                         <td><?php echo $volume->volumeid; ?></td>
                         <td>
                             <form action="<?php echo base_url('volume/toggle_published/' . $volume->volumeid); ?>" method="post">
-                                <select name="published" onchange="this.form.submit()" class="form-control form-control-sm">
+                                <select name="published" onchange="this.form.submit()" class="form-control form-control-sm" style="font-size: 10px;">
                                     <option value="1" <?php echo $volume->published ? 'selected' : ''; ?>>Published</option>
                                     <option value="0" <?php echo !$volume->published ? 'selected' : ''; ?>>Unpublished</option>
                                 </select>
                             </form><br>
 
                             <?php if ($volume->isArchive == 0): ?>
-                            <a href="<?= base_url('pages/archiveVolume/' . $volume->volumeid); ?>" class="btn btn-danger" style="background-color: #FFCA2C; border-color: #FFCA2C;">Archive</a><br><br>
+                            <a href="<?= base_url('pages/archiveVolume/' . $volume->volumeid); ?>"><i class="fa fa-toggle-on" aria-hidden="true" title="Archive Volume" style="font-size: 24px;"></i></a><br><br>
                             <?php else: ?>
-                            <a href="<?= base_url('pages/unArchiveVolume/' . $volume->volumeid); ?>" class="btn btn-danger" style="background-color: #31D2F2; border-color: #31D2F2;">Unarchive</a><br><br>
+                            <a href="<?= base_url('pages/unArchiveVolume/' . $volume->volumeid); ?>"><i class="fa fa-toggle-off" aria-hidden="true" title="Unarchive Volume" style="font-size: 24px;"></i></a><br><br>
                             <?php endif; ?>
                         </td>
                         <td><?php echo $volume->vol_name; ?></td>
                         <td><?php echo $volume->description; ?></td>
                         <td><?php echo $volume->date_at; ?></td>
                         <td><?php echo $volume->date_published; ?></td>
-                        <td>
-                            <a href="<?php echo base_url('volume/db_editVolume/' . $volume->volumeid); ?>" class="btn btn-edit btn-sm">Edit</a><br>
-                            <a href="<?php echo base_url('volume/delete/' . $volume->volumeid); ?>" class="btn btn-delete btn-sm" onclick="return confirm('Are you sure you want to delete this volume?')">Delete</a>
+                        <td class="action-links">
+                            <a href="<?php echo base_url('volume/db_editVolume/' . $volume->volumeid); ?>">Edit</a><br><br>
+                            <a href="<?php echo base_url('volume/delete/' . $volume->volumeid); ?>" onclick="return confirm('Are you sure you want to delete this volume?')">Delete</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
