@@ -56,7 +56,7 @@ public function get_articles_by_volume($volumeid) {
     $this->db->from('articles');
     $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left');
     $this->db->where('articles.volumeid', $volumeid);
-    $this->db->where('articles.isArchived', 0);
+    $this->db->where('articles.isPublished', 0);
     $this->db->where('volume.isArchive', 0);
     $query = $this->db->get();
     return $query->result_array();
@@ -72,13 +72,14 @@ public function get_article() {
         articles.created_at, 
         volume.vol_name,
         volume.volumeid,
-        articles.doi, 
+        articles.doi,
+        articles.isPublished,
         articles.keywords
     ');
     $this->db->from('articles');
     $this->db->join('article_submission', 'articles.slug = article_submission.slug');
     $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left');
-    $this->db->where('articles.isArchived', 0);
+    $this->db->where('articles.isPublished', 0);
     $this->db->where('volume.isArchive', 0);
     $this->db->where('volume.published', 1);
     $this->db->where('article_submission.payment', 1);
@@ -170,6 +171,21 @@ public function archiveArticle($articleid) {
 public function unArchiveArticle($articleid) {
     $this->db->where('articleid', $articleid);
     $this->db->update('articles', array('isArchived' => 0));
+
+    return $this->db->affected_rows() > 0;
+}
+
+public function publishArticle($articleid) {
+    $this->db->where('articleid', $articleid);
+    $this->db->update('articles', array('isPublished' => 1));
+
+    return $this->db->affected_rows() > 0;
+}
+
+
+public function unPublishArticle($articleid) {
+    $this->db->where('articleid', $articleid);
+    $this->db->update('articles', array('isPublished' => 0));
 
     return $this->db->affected_rows() > 0;
 }
@@ -281,6 +297,7 @@ public function get_all_articles() {
         MAX(articles.title) AS title, 
         MAX(articles.keywords) AS keywords, 
         MAX(articles.abstract) AS abstract, 
+        MAX(articles.isPublished) AS isPublished, 
         MAX(articles.filename) AS filename, 
         MAX(article_submission.filename) AS submission_filename, 
         MAX(article_submission.payment) AS payment, 

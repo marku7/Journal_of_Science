@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Articles</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+          crossorigin="anonymous"/>
     <style>
         /* Custom CSS styles */
         body {
@@ -45,8 +49,8 @@
             text-align: center;
         }
 
-        .actions a,
-        .actions button {
+        .actions-add a,
+        .actions-add button {
             margin-right: 10px;
             padding: 6px 12px;
             border: 1px solid #007bff;
@@ -62,7 +66,7 @@
 
         .actions a:hover,
         .actions button:hover {
-            background-color: #0056b3;
+            background-color: #343A40;
         }
 
         .file-link {
@@ -74,7 +78,7 @@
         }
 
         .abstract {
-            max-width: 250px; /* Adjust as needed */
+            max-width: 250px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -89,6 +93,9 @@
             font-size: 25px; /* Increase font size */
             border-bottom: 2px solid #4CAF50; /* Add a bottom border */
             padding-bottom: 10px; /* Add some space below the title */
+        }
+        .actions {
+            font-size: 20px;
         }
     </style>
 </head>
@@ -105,46 +112,38 @@
                 <th>Volume</th>
                 <th>Title</th>
                 <th>File</th>
-                <th>Payment</th>
-                <th>Date Paid</th>
-                <th>Review Status</th>
-                <th>Date Forwarded to Review</th>
-                <th>Approval Status</th>
-                <th>Date Approved</th>
-                <th>Publishing Status</th>
+                <th>Status</th>
                 <th>Date Published</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td class="actions">
+                <td class="actions-add">
                     <a href="<?php echo base_url('pages/db_authSubmission2') ?>" class="btn btn-darkgreen text-blue" target="_blank"><strong>ADD ARTICLE</strong></a>
                 </td>
             </tr>
             <?php foreach ($submittedArticles as $article): ?>
                 <tr>
                     <td class="actions">
-                        <a href="<?= base_url('pages/db_AdminUpdate/' . $article->slug); ?>" class="btn-assign-evaluator">Edit</a><br><br>
-                        <a href="<?= base_url('pages/editArticle/' . $article->articleid); ?>" class="btn-update" style="background-color: #28a745; border-color: #28a745;">Update</a><br><br>
-
-                        <a href="#" onclick="confirmDelete('<?= $article->articleid; ?>')" class="btn btn-danger btn-delete" style="background-color: #dc3545; border-color: #dc3545;">Delete</a>
+                        <a href="<?= base_url('pages/db_AdminUpdate/' . $article->slug); ?>"><i class="fa fa-pencil-square-o" aria-hidden="true" title="Edit Article"></i></a>
+                        <a href="<?= base_url('pages/editArticle/' . $article->articleid); ?>"></a>
+                        <?php if ($article->isPublished == 0): ?>
+                            <a href="<?= base_url('pages/publishArticle/' . $article->articleid); ?>"><i class="fa fa-toggle-on" aria-hidden="true" title="Unpublish Article" style="font-size: 24px;"></i></a>
+                            <?php else: ?>
+                            <a href="<?= base_url('pages/unPublishArticle/' . $article->articleid); ?>"><i class="fa fa-toggle-off" aria-hidden="true" title="Publish Article" style="font-size: 24px;"></i></a>
+                            <?php endif; ?>
+                        <a href="#" onclick="confirmDelete('<?= $article->articleid; ?>')"><i class="fa fa-trash" aria-hidden="true" title="Delete Article"></i></a>
                     </td>
                     <td><?= $article->author_name ?></td>
                     <td><?= $article->volume_name ?></td>
-                    <td><?= strlen($article->title) > 20 ? substr($article->title, 0, 20) . '...' : $article->title ?></td>
+                    <td><?= strlen($article->title) > 70 ? substr($article->title, 0, 70) . '...' : $article->title ?></td>
                     <td>
                         <?php if ($article->filename): ?>
-                            <a href="<?= base_url('files/' . $article->filename); ?>" class="file-link">View</a>
+                            <a href="<?= base_url('files/' . $article->filename); ?>" class="file-link"><i class="fa fa-download" aria-hidden="true" title="Download File"></i></a>
                         <?php else: ?>
                             No file uploaded
                         <?php endif; ?>
                     </td>
-                    <td><?= $article->payment ? 'Paid' : 'Not Paid' ?></td>
-                    <td><?= $article->date_paid ? date('Y-m-d', strtotime($article->date_paid)) : 'N/A' ?></td>
-                    <td><?= $article->review ? 'Reviewed' : 'Not Reviewed' ?></td>
-                    <td><?= $article->date_forwarded_review ? date('Y-m-d', strtotime($article->date_forwarded_review)) : 'N/A' ?></td>
-                    <td><?= $article->approved ? 'Approved' : 'Unapproved' ?></td>
-                    <td><?= $article->date_approved ? date('Y-m-d', strtotime($article->date_approved)) : 'N/A' ?></td>
                     <td><?= $article->published ? 'Published' : 'Unpublished' ?></td>
                     <td><?= $article->date_published ? date('Y-m-d', strtotime($article->date_published)) : 'N/A' ?></td>
                 </tr>

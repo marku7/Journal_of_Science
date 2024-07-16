@@ -68,15 +68,7 @@ class Pages extends Base_Controller {
         redirect('articles/db_allArticles');
     }
     
-    public function archiveArticle($articleid) {
-        $this->Article_model->archiveArticle($articleid);
-        redirect('pages/db_allArticles');
-    }
 
-    public function unArchiveArticle($articleid) {
-        $this->Article_model->unArchiveArticle($articleid);
-        redirect('pages/db_allArticles');
-    }
 
     public function archiveVolume($volumeid) {
         $this->load->model('Volume_model');
@@ -694,7 +686,7 @@ class Pages extends Base_Controller {
         }
     }
 
-
+    
 
     public function editArticle($articleid) {
         $this->load->model('Article_model');
@@ -732,6 +724,16 @@ class Pages extends Base_Controller {
         } else {
             echo "Failed to update article.";
         }
+    }
+
+    public function publishArticle($articleid) {
+        $this->Article_model->publishArticle($articleid);
+        redirect('pages/db_allArticles');
+    }
+
+    public function unPublishArticle($articleid) {
+        $this->Article_model->unPublishArticle($articleid);
+        redirect('pages/db_allArticles');
     }
     
     

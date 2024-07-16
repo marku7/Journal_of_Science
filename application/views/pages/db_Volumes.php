@@ -98,9 +98,9 @@
                             </form><br>
 
                             <?php if ($volume->isArchive == 0): ?>
-                            <a href="<?= base_url('pages/archiveVolume/' . $volume->volumeid); ?>"><i class="fa fa-toggle-on" aria-hidden="true" title="Archive Volume" style="font-size: 24px;"></i></a><br><br>
+                            <a href="<?= base_url('pages/archiveVolume/' . $volume->volumeid); ?>"><i class="fa fa-toggle-on" aria-hidden="true" title="Unarchive Volume" style="font-size: 24px;"></i></a><br><br>
                             <?php else: ?>
-                            <a href="<?= base_url('pages/unArchiveVolume/' . $volume->volumeid); ?>"><i class="fa fa-toggle-off" aria-hidden="true" title="Unarchive Volume" style="font-size: 24px;"></i></a><br><br>
+                            <a href="<?= base_url('pages/unArchiveVolume/' . $volume->volumeid); ?>"><i class="fa fa-toggle-off" aria-hidden="true" title="Archive Volume" style="font-size: 24px;"></i></a><br><br>
                             <?php endif; ?>
                         </td>
                         <td><?php echo $volume->vol_name; ?></td>

@@ -13,6 +13,15 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="<?php echo base_url('css/home/styles.css'); ?>" rel="stylesheet" />
+    <style>
+        .thick-hr {
+    border: 0; /* Removes the default border */
+    height: 4px; /* Adjust the height to make it thicker */
+    background-color: #ddd; /* Adjust the color as needed */
+    margin: 1em 0; /* Optional: adjust the margin as needed */
+}
+
+    </style>
 </head>
 <body>
     <!-- Navigation-->
@@ -67,7 +76,9 @@
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
+                
                 <?php foreach ($volumes as $volume): ?>
+                    <hr class="my-4 thick-hr" />
                     <div id="volume-<?php echo $volume['volumeid']; ?>" class="volume-section">
                         <h1><a href="<?php echo site_url('home/viewVolume/'.$volume['volumeid']); ?>"><?php echo $volume['vol_name']; ?></a></h1>
                         <?php foreach ($articleData as $article): ?>
