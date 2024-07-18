@@ -32,8 +32,8 @@
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <!-- Separate "Login" and "Register" links -->
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="<?php echo base_url('pages/dashboard_admin'); ?>">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="<?php echo base_url('pages/db_adminProfile'); ?>"><?php echo isset($userData->complete_name) ? $userData->complete_name : 'User Profile'; ?></a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="<?php echo base_url('pages/dashboard_authors'); ?>">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="<?php echo base_url('pages/db_authProfile'); ?>"><?php echo isset($userData->complete_name) ? $userData->complete_name : 'User Profile'; ?></a></li>
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="<?php echo base_url('registration/logOut'); ?>">Logout</a></li>
                 </ul>
             </div>
