@@ -78,7 +78,7 @@
   <h2>Author Profile</h2>
 
   <div class="card">
-    <form action="<?php echo base_url('author/saveProfile'); ?>" method="POST">
+    <form action="<?php echo base_url('author/saveProfile2'); ?>" method="POST">
       <div class="form-group">
         <label for="author_name">Author Name:</label>
         <input type="text" id="author_name" name="author_name" value="<?php echo isset($author->author_name) ? $author->author_name : ''; ?>">

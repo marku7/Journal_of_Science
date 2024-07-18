@@ -48,7 +48,7 @@ class Author extends CI_Controller {
             }
 
             $this->session->set_flashdata('success', 'Profile saved successfully.');
-            redirect(base_url('pages/db_AuthorProf'));
+            redirect(base_url('pages/db_AuthorsProfile'));
         } else {
 
             $this->profile();
@@ -84,7 +84,7 @@ class Author extends CI_Controller {
             }
 
             $this->session->set_flashdata('success', 'Profile saved successfully.');
-            redirect(base_url('pages/db_AuthorsProfile'));
+            redirect(base_url('pages/db_AuthorProf'));
         } else {
 
             $this->profile();
