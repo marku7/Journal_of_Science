@@ -55,13 +55,9 @@ class Pages extends Base_Controller {
 
     public function edit_author($audid) {
         $data['author'] = $this->Author_model->get_author($audid);
-
-        if (empty($data['author'])) {
-            show_404();
-        }
-
-        $this->load->view('edit_author', $data);
+        $this->load->view('pages/edit_author', $data);
     }
+    
      
     public function delete($articleid) {
         $this->Article_model->delete_article($articleid);

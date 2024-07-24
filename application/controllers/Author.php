@@ -136,7 +136,7 @@ class Author extends CI_Controller {
                 'title' => $this->input->post('title')
             );
             $this->Author_model->update_author($audid, $author_data);
-            redirect('author');
+            redirect('pages/db_authorList');
         }
     }
 
