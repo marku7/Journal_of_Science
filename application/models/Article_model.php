@@ -19,6 +19,15 @@ class Article_model extends CI_Model {
         return $query->row(); // Assuming you're expecting only one author per article
     }
 
+    public function getAuthorsByArticleIdss($articleId) {
+        $this->db->select('authors.author_name');
+        $this->db->from('article_author');
+        $this->db->join('authors', 'article_author.audid = authors.audid');
+        $this->db->where('article_author.articleid', $articleId);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
     public function insertArticleAuthor($article_id, $author_id) {
         $data = array(
             'articleid' => $article_id,
@@ -285,6 +294,20 @@ public function update_article_submission($articleid, $articleData) {
     }
 }
 
+public function getAuthorsByArticleIds($article_ids) {
+    if (empty($article_ids)) {
+        return [];
+    }
+
+    $this->db->select('article_author.articleid, authors.author_name');
+    $this->db->from('article_author');
+    $this->db->join('authors', 'article_author.audid = authors.audid');
+    $this->db->where_in('article_author.articleid', $article_ids);
+    $query = $this->db->get();
+    return $query->result();
+}
+
+
 public function get_all_articles() {
     $this->db->select('
         articles.articleid, 
@@ -315,7 +338,6 @@ public function get_all_articles() {
     $this->db->join('article_submission', 'articles.slug = article_submission.slug');
     $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left'); // Assuming volumeid is the foreign key
     $this->db->where('volume.isArchive', 0); 
-    $this->db->where('articles.isPublished', 1);// Filter to get only articles with volumeid having isArchive as 0
     $this->db->group_by('articles.articleid'); 
     $query = $this->db->get();
     return $query->result();
@@ -356,6 +378,7 @@ public function get_admin_articles() {
     $query = $this->db->get();
     return $query->result();
 }
+
 
 
 public function searchArticles($searchQuery) {

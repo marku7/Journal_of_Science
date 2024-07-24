@@ -32,6 +32,8 @@ class Article extends CI_Controller {
                 $doi = $doi_prefix . ':' . $unique_identifier;
     
                 $volume_id = $this->input->post('volume_id');
+                $coauthor_id = $this->input->post('coauthor_id');
+                $coauthor_id2 = $this->input->post('coauthor_id2');
     
                 // Get the user ID of the author who submitted the article
                 $user_id = $this->session->userdata('UserLoginSession')['userid'] ?? null;
@@ -40,6 +42,7 @@ class Article extends CI_Controller {
                 $this->load->model('Author_model');
                 $author_id = $this->Author_model->getAuthorIdByUserId($user_id);
     
+                
                 if (!$author_id) {
                     // Handle the case where author_id is not found
                     $this->session->set_flashdata('error', 'Author ID not found.');
@@ -54,9 +57,7 @@ class Article extends CI_Controller {
                     'filename' => $user_filename,
                     'doi' => $doi,
                     'volumeid' => $volume_id,
-                    'isPublished' => 0,
-                    'isArchived' => 0
-
+                    'isPublished' => 0
                 );
     
                 $this->load->model('Article_model');
@@ -65,7 +66,15 @@ class Article extends CI_Controller {
                 if ($article_id) {
                     // Insert into article_author table
                     $this->Article_model->insertArticleAuthor($article_id, $author_id);
-    
+                    
+                    if (!empty($coauthor_id)) {
+                        $this->Article_model->insertArticleAuthor($article_id, $coauthor_id);
+                    }
+
+                    if (!empty($coauthor_id2)) {
+                        $this->Article_model->insertArticleAuthor($article_id, $coauthor_id2);
+                    }
+
                     // Insert into article_submission table
                     $submission_data = array(
                         'auid' => $author_id,
@@ -87,7 +96,7 @@ class Article extends CI_Controller {
                     $this->Article_model->insertArticleSubmission($submission_data);
     
                     $this->session->set_flashdata('success', 'Article submitted successfully!');
-                    redirect(base_url('home/home_lp'));
+                    redirect(base_url('pages/db_allArticles'));
                 } else {
                     $this->session->set_flashdata('error', 'Failed to submit article.');
                     redirect(base_url('article/submitForm'));

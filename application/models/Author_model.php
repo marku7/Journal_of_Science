@@ -67,4 +67,11 @@ class Author_model extends CI_Model {
         $query = $this->db->get_where('authors', array('uid' => $user_id));
         return $query->row(); // Returns the author data if found, otherwise null
     }
+    
+    public function get_authors() {
+        $this->db->select('audid, author_name');
+        $this->db->from('authors');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 }

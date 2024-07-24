@@ -77,7 +77,7 @@
 <div class="container">
 <?php echo validation_errors(); ?>
     <h2>Article Submission Form</h2>
-    <form action="<?php echo base_url('article/submitNow2')?>" method="POST" enctype="multipart/form-data">
+    <form action="<?php echo base_url('article/submitNow')?>" method="POST" enctype="multipart/form-data">
     <label for="title">Title:</label>
     <input type="text" id="title" name="title" class="form-control" required>
     
@@ -93,7 +93,23 @@
             <option value="<?php echo $volume['volumeid']; ?>"><?php echo $volume['vol_name']; ?></option>
         <?php endforeach; ?>
     </select>
-    
+
+    <label for="coauthor">Co-author(Optional):</label>
+        <select id="coauthor" name="coauthor_id" class="form-control">
+            <option value="">None</option>
+            <?php foreach ($authors as $author): ?>
+                <option value="<?php echo $author['audid']; ?>"><?php echo $author['author_name']; ?></option>
+            <?php endforeach; ?>
+        </select>
+
+    <label for="coauthor2">Co-author/s(Optional):</label>
+        <select id="coauthor2" name="coauthor_id2" class="form-control">
+            <option value="">None</option>
+            <?php foreach ($authors as $author): ?>
+                <option value="<?php echo $author['audid']; ?>"><?php echo $author['author_name']; ?></option>
+            <?php endforeach; ?>
+        </select>
+
     <label for="file">Upload File:</label>
     <input type="file" id="file" name="file" accept=".pdf" class="form-control">
     
