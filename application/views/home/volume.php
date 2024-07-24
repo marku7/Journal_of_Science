@@ -60,11 +60,16 @@
                                 <p class="post-subtitle"><?php echo isset($article['abstract']) && strlen($article['abstract']) > 100 ? substr($article['abstract'], 0, 100) . '...' : $article['abstract']; ?></p>
                             </a>
                             <p class="post-meta">
-                                Author:
-                                <span class="meta">
-                                    <small><a href="#!"><?php echo $article['author_name']; ?><br></a> Published On: <?php echo date('F d, Y', strtotime($article['created_at'])); ?></small>
-                                </span>
-                            </p>
+                            Author/s:
+                            <span class="meta">
+                                <small>
+                                    <?php foreach ($article['authors'] as $author_name): ?>
+                                        <a href="#!"><?php echo $author_name; ?></a><br>
+                                    <?php endforeach; ?>
+                                    Published On: <?php echo date('F d, Y', strtotime($article['created_at'])); ?>
+                                </small>
+                            </span>
+                        </p>
                             <div class="d-flex justify-content-end mb-4">
                                 <a class="btn btn-primary text-uppercase" href="<?php echo site_url('home/post/'.$article['slug']); ?>"><small> Read More... </small></a>
                             </div>

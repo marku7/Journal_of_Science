@@ -55,9 +55,19 @@
                         <p><strong>Volume:</strong> <?php echo $article->vol_name; ?></p>
                 <p><strong>DOI:</strong> <?php echo $article->doi; ?></p>
                 <p><strong>Keywords:</strong> <?php echo $article->keywords; ?></p>
-                        <span class="meta">
-                            Author: <small><a href="#!"><?php echo $article->author_name; ?></a> Published on: <?php echo date('F d, Y', strtotime($article->created_at)); ?></small>
-                        </span>
+                <span class="meta">
+                        Author/s:
+                        <small>
+                            <?php if (!empty($article->authors)): ?>
+                                <?php foreach ($article->authors as $index => $author_name): ?>
+                                    <a href="#!"><?php echo $author_name; ?></a><?php echo $index < count($article->authors) - 1 ? ', ' : ''; ?>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <a href="#!">Unknown Author</a>
+                            <?php endif; ?>
+                        </small> 
+                        <br>Date: <?php echo date('F d, Y', strtotime($article->created_at)); ?>
+                    </span>
                     </div>
             </div>
         </div>

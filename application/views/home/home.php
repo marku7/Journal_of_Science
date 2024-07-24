@@ -15,12 +15,11 @@
     <link href="<?php echo base_url('css/home/styles.css'); ?>" rel="stylesheet" />
     <style>
         .thick-hr {
-    border: 0; /* Removes the default border */
-    height: 4px; /* Adjust the height to make it thicker */
-    background-color: #ddd; /* Adjust the color as needed */
-    margin: 1em 0; /* Optional: adjust the margin as needed */
-}
-
+            border: 0; /* Removes the default border */
+            height: 4px; /* Adjust the height to make it thicker */
+            background-color: #ddd; /* Adjust the color as needed */
+            margin: 1em 0; /* Optional: adjust the margin as needed */
+        }
     </style>
 </head>
 <body>
@@ -48,7 +47,6 @@
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="<?php echo base_url('home/archive'); ?>">Archives</a></li>
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="<?php echo base_url('home/about'); ?>">About</a></li>
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="<?php echo base_url('home/contact'); ?>">Contact</a></li>
-                    
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="<?php echo base_url('registration/login'); ?>">Login</a></li>
@@ -76,13 +74,15 @@
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
-                
                 <?php foreach ($volumes as $volume): ?>
                     <hr class="my-4 thick-hr" />
                     <div id="volume-<?php echo $volume['volumeid']; ?>" class="volume-section">
                         <h1><a href="<?php echo site_url('home/viewVolume/'.$volume['volumeid']); ?>"><?php echo $volume['vol_name']; ?></a></h1>
-                        <?php foreach ($articleData as $article): ?>
-                            <?php if ($article->volumeid == $volume['volumeid']): ?>
+                        <?php 
+                        $hasArticles = false;
+                        foreach ($articleData as $article): 
+                            if ($article->volumeid == $volume['volumeid']):
+                                $hasArticles = true; ?>
                                 <div class="post-preview">
                                     <a href="<?php echo site_url('home/post/'.$article->slug); ?>">
                                         <h4 class="post-title"><?php echo $article->title; ?></h4>
@@ -91,9 +91,18 @@
                                         <p class="post-subtitle"><?php echo isset($article->abstract) && strlen($article->abstract) > 100 ? substr($article->abstract, 0, 100) . '...' : $article->abstract; ?></p>
                                     </a>
                                     <p class="post-meta">
-                                        Author:
+                                        Authors:
                                         <span class="meta">
-                                            <small><a href="#!"><?php echo $article->author_name; ?><br></a> Published On: <?php echo date('F d, Y', strtotime($article->created_at)); ?></small>
+                                            <small>
+                                                <?php if (!empty($article->authors)): ?>
+                                                    <?php foreach ($article->authors as $index => $author): ?>
+                                                        <a href="#!"><?php echo $author->author_name; ?></a><?php echo $index < count($article->authors) - 1 ? ', ' : ''; ?>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <a href="#!">Unknown Author</a>
+                                                <?php endif; ?>
+                                            </small>
+                                            <br>Published On: <?php echo date('F d, Y', strtotime($article->created_at)); ?>
                                         </span>
                                     </p>
                                     <div class="d-flex justify-content-end mb-4">
@@ -103,6 +112,9 @@
                                 <hr class="my-4" />
                             <?php endif; ?>
                         <?php endforeach; ?>
+                        <?php if (!$hasArticles): ?>
+                            <p>No published articles belong to this volume.</p>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -154,7 +166,14 @@
         document.querySelectorAll('.dropdown-item').forEach(item => {
             item.addEventListener('click', event => {
                 event.preventDefault();
-                document.querySelector(item.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                const targetId = event.target.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                const navbarHeight = document.querySelector('.navbar').offsetHeight;
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop - navbarHeight,
+                    behavior: 'smooth'
+                });
             });
         });
     </script>

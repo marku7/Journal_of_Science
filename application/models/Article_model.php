@@ -293,6 +293,24 @@ public function update_article_submission($articleid, $articleData) {
         return false;
     }
 }
+public function get_articles_by_vol($volume_id) {
+    $this->db->select('articles.articleid, articles.title, articles.slug, articles.abstract, articles.created_at, articles.doi, articles.keywords');
+    $this->db->from('articles');
+    $this->db->where('articles.volumeid', $volume_id);
+    $this->db->where('articles.isPublished', 1);
+    $this->db->group_by('articles.articleid'); // Ensure articles are unique
+    $query = $this->db->get();
+    return $query->result_array();
+}
+
+public function getAuthorsByArticleId($articleId) {
+    $this->db->select('authors.author_name');
+    $this->db->from('article_author');
+    $this->db->join('authors', 'article_author.audid = authors.audid');
+    $this->db->where('article_author.articleid', $articleId);
+    $query = $this->db->get();
+    return $query->result();
+}
 
 public function getAuthorsByArticleIds($article_ids) {
     if (empty($article_ids)) {
