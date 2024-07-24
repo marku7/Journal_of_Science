@@ -148,27 +148,26 @@ class Users extends CI_Controller {
             redirect('users');
         }
     }
-
     public function edit($userid) {
         $this->form_validation->set_rules('complete_name', 'Complete Name', 'required');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-        $this->form_validation->set_rules('role', 'Role', 'required');
-        $this->form_validation->set_rules('status', 'Status', 'required|in_list[0,1]');
-
+        $this->form_validation->set_rules('role', 'Role', 'required|integer');
+        $this->form_validation->set_rules('status', 'Status', 'in_list[0,1]');
+    
         if ($this->form_validation->run() === FALSE) {
             $data['user'] = $this->User_model->get_user($userid);
-            $this->load->view('users/edit', $data);
+            $this->load->view('pages/edit', $data);
         } else {
             $data = array(
                 'complete_name' => $this->input->post('complete_name'),
                 'email' => $this->input->post('email'),
-                'role' => $this->input->post('role'),
-                'status' => $this->input->post('status')
+                'role' => (int) $this->input->post('role'),
+                'status' => $this->input->post('status') ? 1 : 0
             );
             $this->User_model->update_user($userid, $data);
-            redirect('users');
+            redirect('users/db_Users');
         }
-    }
+    }      
 
     public function delete($userid) {
         $this->User_model->delete_user($userid);
