@@ -75,6 +75,17 @@
             margin-bottom: 10px;
         }
     </style>
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const textarea = document.getElementById("author");
+            textarea.addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    textarea.value += ", ";
+                }
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="container">
@@ -97,12 +108,8 @@
             <?php endforeach; ?>
         </select>
 
-        <label for="numAuthors">Number of Authors:</label>
-        <input type="number" id="numAuthors" name="num_authors" class="form-control" value="1" min="1" max="50" required>
-
-        <div id="coAuthorsContainer">
-            <!-- Co-author fields will be dynamically added here -->
-        </div>
+        <label for="author">Author/s:</label>
+        <textarea id="author" name="author" class="form-control" rows="5" style="resize: vertical;" required></textarea>
         
         <label for="file">Upload File:</label>
         <input type="file" id="file" name="file" accept=".pdf" class="form-control">

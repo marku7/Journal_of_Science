@@ -39,11 +39,9 @@ class Pages extends Base_Controller {
             $info['userData'] = $userData;
     
             // Fetch articles and pass them to the view
-            $articles = $this->Article_model->get_all_articles();
-            foreach ($articles as &$article) {
-                $authorData = $this->Article_model->getAuthorsByArticleIdss($article->articleid);
-                $article->author_names = $authorData ? array_column($authorData, 'author_name') : ['Unknown Author'];
-            }
+            $articles = $this->Article_model->get_all_articles2();
+
+           
             $info['submittedArticles'] = $articles;
     
             $this->load_view2('db_allArticles', $info);

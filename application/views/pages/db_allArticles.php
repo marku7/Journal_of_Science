@@ -133,8 +133,7 @@
                             <?php endif; ?>
                         <a href="#" onclick="confirmDelete('<?= $article->articleid; ?>')"><i class="fa fa-trash" aria-hidden="true" title="Delete Article"></i></a>
                     </td>
-                    <td><?= implode(', ', $article->author_names) ?></td>
-
+                    <td><?= $article->author_name ?></td>
                     <td><?= $article->volume_name ?></td>
                     <td><?= strlen($article->title) > 70 ? substr($article->title, 0, 70) . '...' : $article->title ?></td>
                     <td>
@@ -144,7 +143,7 @@
                             No file uploaded
                         <?php endif; ?>
                     </td>
-                    <td><?= $article->date_published ? date('Y-m-d', strtotime($article->date_published)) : 'Not Published' ?></td>
+                    <td><?= $article->created_at ? date('Y-m-d', strtotime($article->created_at)) : 'Not Published' ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

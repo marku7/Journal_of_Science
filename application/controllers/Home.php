@@ -11,19 +11,13 @@ class Home extends CI_Controller {
         $this->load->model('Volume_model');
     }
     public function index() {
-        $data['articleData'] = $this->Article_model->get_all_articles();
-        $data['volumes'] = $this->Volume_model->getVolumes();
-        // Retrieve article data
-        $articleData = $this->Article_model->get_article();
-    
-        if (!empty($articleData)) {
-            foreach ($articleData as $article) {
-                $authorData = $this->Article_model->getAuthorsByArticleId($article->articleid);
-                $article->authors = $authorData;
-            }
+        $volumes = $this->Volume_model->getVolumesHome();
+        
+        foreach ($volumes as &$volume) {
+            $volume['articles'] = $this->Article_model->get_articles_by_volume2($volume['volumeid']);
         }
-    
-        $data['articleData'] = $articleData; 
+
+        $data['volumes'] = $volumes;
         $this->load->view('home/home', $data);
     }
     

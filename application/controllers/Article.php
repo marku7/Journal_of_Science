@@ -18,6 +18,7 @@ class Article extends CI_Controller {
             $this->form_validation->set_rules('title', 'Title', 'required');
             $this->form_validation->set_rules('keywords', 'Keywords', 'required');
             $this->form_validation->set_rules('abstract', 'Abstract', 'required');
+            $this->form_validation->set_rules('author', 'Author', 'required');
         
     
             if ($this->form_validation->run() == TRUE) {
@@ -33,7 +34,7 @@ class Article extends CI_Controller {
                 $doi = $doi_prefix . ':' . $unique_identifier;
     
                 $volume_id = $this->input->post('volume_id');
-                $coauthor_ids = $this->input->post('coauthor_id'); // This will be an array of co-author IDs
+                $authors = $this->input->post('author'); 
     
                 // Get the user ID of the author who submitted the article
                 $user_id = $this->session->userdata('UserLoginSession')['userid'] ?? null;
@@ -56,7 +57,8 @@ class Article extends CI_Controller {
                     'filename' => $user_filename,
                     'doi' => $doi,
                     'volumeid' => $volume_id,
-                    'isPublished' => 0
+                    'isPublished' => 0,
+                    'author' => $authors
                 );
     
                 $this->load->model('Article_model');
@@ -65,13 +67,6 @@ class Article extends CI_Controller {
                 if ($article_id) {
                     // Insert the main author (the one who posted the article) into the article_author table
                     $this->Article_model->insertArticleAuthor($article_id, $author_id);
-    
-                    // Insert additional co-authors if any
-                    if (!empty($coauthor_ids)) {
-                        foreach ($coauthor_ids as $coauthor_id) {
-                            $this->Article_model->insertArticleAuthor($article_id, $coauthor_id);
-                        }
-                    }
     
                     // Insert into article_submission table
                     $submission_data = array(

@@ -58,13 +58,7 @@
                 <span class="meta">
                         Author/s:
                         <small>
-                            <?php if (!empty($article->authors)): ?>
-                                <?php foreach ($article->authors as $index => $author_name): ?>
-                                    <a href="#!"><?php echo $author_name; ?></a><?php echo $index < count($article->authors) - 1 ? ', ' : ''; ?>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <a href="#!">Unknown Author</a>
-                            <?php endif; ?>
+                        <?php echo $article->author; ?>
                         </small> 
                         <br>Date: <?php echo date('F d, Y', strtotime($article->created_at)); ?>
                     </span>

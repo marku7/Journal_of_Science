@@ -107,7 +107,8 @@ public function get_archive() {
         volume.vol_name,
         volume.volumeid,
         articles.doi, 
-        articles.keywords
+        articles.keywords,
+        articles.author
     ');
     $this->db->from('articles');
     $this->db->join('article_submission', 'articles.slug = article_submission.slug');
@@ -131,7 +132,7 @@ public function getArchivedVolumes() {
 
 
 public function get_article_slug($slug) {
-    $this->db->select('articles.articleid, articles.title, articles.slug, articles.abstract, articles.created_at, volume.vol_name, articles.doi, articles.keywords');
+    $this->db->select('articles.articleid, articles.title, articles.slug, articles.abstract, articles.created_at, volume.vol_name, articles.doi, articles.keywords, articles.author');
     $this->db->from('articles');
     $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left');
     $this->db->where('articles.slug', $slug);
@@ -294,7 +295,7 @@ public function update_article_submission($articleid, $articleData) {
     }
 }
 public function get_articles_by_vol($volume_id) {
-    $this->db->select('articles.articleid, articles.title, articles.slug, articles.abstract, articles.created_at, articles.doi, articles.keywords');
+    $this->db->select('articles.articleid, articles.title, articles.slug, articles.abstract, articles.created_at, articles.doi, articles.keywords, articles.author');
     $this->db->from('articles');
     $this->db->where('articles.volumeid', $volume_id);
     $this->db->where('articles.isPublished', 1);
@@ -354,13 +355,45 @@ public function get_all_articles() {
     $this->db->join('article_author', 'articles.articleid = article_author.articleid');
     $this->db->join('authors', 'article_author.audid = authors.audid');
     $this->db->join('article_submission', 'articles.slug = article_submission.slug');
-    $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left'); // Assuming volumeid is the foreign key
+    $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left'); 
     $this->db->where('volume.isArchive', 0); 
     $this->db->group_by('articles.articleid'); 
     $query = $this->db->get();
     return $query->result();
 }
 
+public function get_all_articles2() {
+    $this->db->select('
+        articles.articleid, 
+        articles.slug, 
+        articles.title AS title, 
+        articles.keywords AS keywords, 
+        articles.abstract AS abstract, 
+        articles.isPublished AS isPublished, 
+        articles.filename AS filename, 
+        articles.author AS author_name, 
+        volume.vol_name AS volume_name,
+        articles.created_at AS created_at
+    ');
+    $this->db->from('articles');
+    $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left');
+    $this->db->where('volume.isArchive', 0); 
+    $this->db->order_by('articles.created_at', 'DESC');
+    $query = $this->db->get();
+    return $query->result();
+}
+
+public function get_articles_by_volume2($volume_id) {
+    $this->db->select('articles.articleid, articles.title, articles.slug, articles.abstract, articles.keywords, articles.doi, articles.created_at, articles.author');
+    $this->db->from('articles');
+    $this->db->join('article_author', 'articles.articleid = article_author.articleid', 'left');
+    $this->db->where('articles.volumeid', $volume_id);
+    $this->db->where('articles.isPublished', 1);
+    $this->db->group_by('articles.articleid');
+    $this->db->order_by('articles.created_at', 'DESC');
+    $query = $this->db->get();
+    return $query->result_array();
+}
 
 public function get_admin_articles() {
     $this->db->select('

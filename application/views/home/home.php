@@ -80,37 +80,25 @@
                         <h1><a href="<?php echo site_url('home/viewVolume/'.$volume['volumeid']); ?>"><?php echo $volume['vol_name']; ?></a></h1>
                         <?php 
                         $hasArticles = false;
-                        foreach ($articleData as $article): 
-                            if ($article->volumeid == $volume['volumeid']):
-                                $hasArticles = true; ?>
-                                <div class="post-preview">
-                                    <a href="<?php echo site_url('home/post/'.$article->slug); ?>">
-                                        <h4 class="post-title"><?php echo $article->title; ?></h4>
-                                        <p><strong>DOI:</strong> <?php echo $article->doi; ?></p>
-                                        <p><strong>Keywords:</strong> <?php echo $article->keywords; ?></p>
-                                        <p class="post-subtitle"><?php echo isset($article->abstract) && strlen($article->abstract) > 100 ? substr($article->abstract, 0, 100) . '...' : $article->abstract; ?></p>
-                                    </a>
-                                    <p class="post-meta">
-                                        Authors:
-                                        <span class="meta">
-                                            <small>
-                                                <?php if (!empty($article->authors)): ?>
-                                                    <?php foreach ($article->authors as $index => $author): ?>
-                                                        <a href="#!"><?php echo $author->author_name; ?></a><?php echo $index < count($article->authors) - 1 ? ', ' : ''; ?>
-                                                    <?php endforeach; ?>
-                                                <?php else: ?>
-                                                    <a href="#!">Unknown Author</a>
-                                                <?php endif; ?>
-                                            </small>
-                                            <br>Published On: <?php echo date('F d, Y', strtotime($article->created_at)); ?>
-                                        </span>
-                                    </p>
-                                    <div class="d-flex justify-content-end mb-4">
-                                        <a class="btn btn-primary text-uppercase" href="<?php echo site_url('home/post/'.$article->slug); ?>"><small> Read More... </small></a>
-                                    </div>
+                        foreach ($volume['articles'] as $article): 
+                            $hasArticles = true; ?>
+                            <div class="post-preview">
+                                <a href="<?php echo site_url('home/post/'.$article['slug']); ?>">
+                                    <h4 class="post-title"><?php echo $article['title']; ?></h4>
+                                    <p><strong>DOI:</strong> <?php echo $article['doi']; ?></p>
+                                    <p><strong>Keywords:</strong> <?php echo $article['keywords']; ?></p>
+                                    <p class="post-subtitle"><?php echo isset($article['abstract']) && strlen($article['abstract']) > 100 ? substr($article['abstract'], 0, 100) . '...' : $article['abstract']; ?></p>
+                                </a>
+                                <p class="post-meta">
+                                    Author/s:
+                                    <i><?php echo $article['author']; ?></i><br>
+                                    Published on: <?php echo date('F d, Y', strtotime($article['created_at'])); ?>
+                                </p>
+                                <div class="d-flex justify-content-end mb-4">
+                                    <a class="btn btn-primary text-uppercase" href="<?php echo site_url('home/post/'.$article['slug']); ?>"><small> Read More... </small></a>
                                 </div>
-                                <hr class="my-4" />
-                            <?php endif; ?>
+                            </div>
+                            <hr class="my-4" />
                         <?php endforeach; ?>
                         <?php if (!$hasArticles): ?>
                             <p>No published articles belong to this volume.</p>
@@ -158,9 +146,9 @@
         </div>
     </footer>
     <!-- Bootstrap core JS-->
-    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="<?php echo base_url('js/bootstrap.bundle.min.js'); ?>"></script>
     <!-- Core theme JS-->
-    <script src="js/scripts.js"></script>
+    <script src="<?php echo base_url('js/scripts.js'); ?>"></script>
     <!-- Custom JS for smooth scrolling -->
     <script>
         document.querySelectorAll('.dropdown-item').forEach(item => {

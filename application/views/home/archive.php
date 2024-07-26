@@ -70,7 +70,8 @@
                                     <p class="post-meta">
                                         Author:
                                         <span class="meta">
-                                            <small><a href="#!"><?php echo $article->author_name; ?><br></a> Published On: <?php echo date('F d, Y', strtotime($article->created_at)); ?></small>
+                                            <small><?php echo $article->author; ?><br>
+                                            Published On: <?php echo date('F d, Y', strtotime($article->created_at)); ?></small>
                                         </span>
                                     </p>
                                     <div class="d-flex justify-content-end mb-4">
