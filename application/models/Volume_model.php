@@ -14,10 +14,10 @@ class Volume_model extends CI_Model {
     }
 
     public function getArchivedVolumes() {
-        $this->db->select('volumeid, vol_name');
+        $this->db->select('volumeid, vol_name, description, date_published');
         $this->db->from('volume');
         $this->db->where('isArchive', 1);
-        $this->db->order_by('vol_name', 'ASC'); 
+        $this->db->order_by('date_at', 'DESC');
     
         $query = $this->db->get();
         return $query->result_array(); 
@@ -49,6 +49,11 @@ class Volume_model extends CI_Model {
         $query = $this->db->get_where('volume', array('isArchive' => 0, 'published' => 1));
         return $query->result_array();
     }
+
+    public function get_archivedVolume($volumeid) {
+        $query = $this->db->get_where('volume', array('volumeid' => $volumeid, 'isArchive' => 1));
+        return $query->row_array();
+    } 
 
     public function getVolumesHome() {
         $this->db->where('isArchive', 0);

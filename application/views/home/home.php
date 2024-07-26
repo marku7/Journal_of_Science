@@ -40,7 +40,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <?php foreach ($volumes as $volume): ?>
-                                <li><a class="dropdown-item" href="#volume-<?php echo $volume['volumeid']; ?>"><?php echo $volume['vol_name']; ?></a></li>
+                                <li><a class="dropdown-item" href="<?php echo site_url('home/viewVolume/'.$volume['volumeid']); ?>"><?php echo $volume['vol_name']; ?></a></li>
                             <?php endforeach; ?>
                         </ul>
                     </li>
@@ -150,20 +150,5 @@
     <!-- Core theme JS-->
     <script src="<?php echo base_url('js/scripts.js'); ?>"></script>
     <!-- Custom JS for smooth scrolling -->
-    <script>
-        document.querySelectorAll('.dropdown-item').forEach(item => {
-            item.addEventListener('click', event => {
-                event.preventDefault();
-                const targetId = event.target.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                const navbarHeight = document.querySelector('.navbar').offsetHeight;
-                
-                window.scrollTo({
-                    top: targetElement.offsetTop - navbarHeight,
-                    behavior: 'smooth'
-                });
-            });
-        });
-    </script>
 </body>
 </html>

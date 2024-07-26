@@ -46,6 +46,43 @@ class Home extends CI_Controller {
         $this->load->view('home/archive', $data);
     }
     
+    public function viewVolumeArchive($volumeid) {
+        $this->load->model('Article_model');
+        $this->load->model('Volume_model');
+        
+        // Get volume details
+        $data['volume'] = $this->Volume_model->get_archivedVolume($volumeid);
+        
+        // Check if volume exists
+        if (empty($data['volume'])) {
+            show_404();
+        }
+        
+        // Get articles for the volume
+        $data['articles'] = $this->Article_model->get_articles_by_vol($volumeid);
+        
+        // Loop through each article data to fetch authors' names and add them to the article data
+        if (!empty($data['articles'])) {
+            $article_ids = array_column($data['articles'], 'articleid');
+            $authors = $this->Article_model->getAuthorsByArticleIds($article_ids);
+            
+            // Create a map of article IDs to their authors
+            $article_author_map = [];
+            foreach ($authors as $author) {
+                $article_author_map[$author->articleid][] = $author->author_name;
+            }
+            
+            // Add authors to each article
+            foreach ($data['articles'] as &$article) {
+                $article['authors'] = isset($article_author_map[$article['articleid']]) ? $article_author_map[$article['articleid']] : [];
+            }
+        }
+        
+        // Set the title and load the view
+        $data['title'] = $data['volume']['vol_name'];
+        $data['volumes'] = $this->Volume_model->get_all_volumes();
+        $this->load->view('home/archivedVol', $data);
+    }
 
     public function viewVolume($volumeid) {
         $this->load->model('Article_model');

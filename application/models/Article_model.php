@@ -106,6 +106,7 @@ public function get_archive() {
         articles.created_at, 
         volume.vol_name,
         volume.volumeid,
+        volume.date_at,
         articles.doi, 
         articles.keywords,
         articles.author
@@ -114,7 +115,7 @@ public function get_archive() {
     $this->db->join('article_submission', 'articles.slug = article_submission.slug');
     $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left');
     $this->db->where('volume.isArchive', 1);
-    $this->db->order_by('volume.vol_name', 'ASC'); 
+    $this->db->order_by('volume.date_at', 'DESC'); 
 
     $query = $this->db->get();
     return $query->result(); 
@@ -299,7 +300,8 @@ public function get_articles_by_vol($volume_id) {
     $this->db->from('articles');
     $this->db->where('articles.volumeid', $volume_id);
     $this->db->where('articles.isPublished', 1);
-    $this->db->group_by('articles.articleid'); // Ensure articles are unique
+    $this->db->group_by('articles.articleid');
+    $this->db->order_by('articles.created_at', 'DESC');
     $query = $this->db->get();
     return $query->result_array();
 }
