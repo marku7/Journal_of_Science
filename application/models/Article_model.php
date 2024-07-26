@@ -67,6 +67,7 @@ public function get_articles_by_volume($volumeid) {
     $this->db->where('articles.volumeid', $volumeid);
     $this->db->where('articles.isPublished', 1);
     $this->db->where('volume.isArchive', 0);
+    $this->db->order_by('articles.created_at', 'DESC');
     $query = $this->db->get();
     return $query->result_array();
 }
@@ -91,7 +92,7 @@ public function get_article() {
     $this->db->where('articles.isPublished', 1);
     $this->db->where('volume.isArchive', 0);
     $this->db->where('volume.published', 1);
-    $this->db->order_by('volume.vol_name', 'ASC'); 
+    $this->db->order_by('created_at', 'DESC'); 
 
     $query = $this->db->get();
     return $query->result(); 
@@ -133,7 +134,7 @@ public function getArchivedVolumes() {
 
 
 public function get_article_slug($slug) {
-    $this->db->select('articles.articleid, articles.title, articles.slug, articles.abstract, articles.created_at, volume.vol_name, articles.doi, articles.keywords, articles.author');
+    $this->db->select('articles.articleid, articles.title, articles.slug, articles.abstract, articles.created_at, volume.vol_name, articles.doi, articles.keywords, volume.date_at, articles.author');
     $this->db->from('articles');
     $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left');
     $this->db->where('articles.slug', $slug);
@@ -360,6 +361,7 @@ public function get_all_articles() {
     $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left'); 
     $this->db->where('volume.isArchive', 0); 
     $this->db->group_by('articles.articleid'); 
+    $this->db->order_by('articles.created_at', 'DESC');
     $query = $this->db->get();
     return $query->result();
 }

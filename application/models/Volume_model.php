@@ -37,16 +37,19 @@ class Volume_model extends CI_Model {
     }
     
     public function getAllVolumes() {
+        $this->db->order_by('date_at', 'DESC');
         return $this->db->get('Volume')->result();
     }
 
     public function getVolumes() {
         $this->db->where('isArchive', 0);
+        $this->db->order_by('date_published', 'DESC');
         return $this->db->get('Volume')->result_array();
     }
 
     public function get_all_volumes() {
         $query = $this->db->get_where('volume', array('isArchive' => 0, 'published' => 1));
+        $this->db->order_by('date_published', 'DESC'); 
         return $query->result_array();
     }
 
