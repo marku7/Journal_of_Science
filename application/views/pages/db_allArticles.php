@@ -112,7 +112,7 @@
                 <th>Volume</th>
                 <th>Title</th>
                 <th>File</th>
-                <th>Date Published</th>
+                <th>Date Added</th>
             </tr>
         </thead>
         <tbody>
@@ -132,10 +132,11 @@
                             <a href="<?= base_url('pages/unPublishArticle/' . $article->articleid); ?>"><i class="fa fa-toggle-on" aria-hidden="true" title="Unpublish Article" style="font-size: 24px;"></i></a>
                             <?php endif; ?>
                         <a href="#" onclick="confirmDelete('<?= $article->articleid; ?>')"><i class="fa fa-trash" aria-hidden="true" title="Delete Article"></i></a>
+                        <a href="<?= base_url('pages/viewArticle/' . $article->articleid); ?>"><i class="fa fa-eye" aria-hidden="true" title="View Article"></i></a>
                     </td>
                     <td><?= $article->author_name ?></td>
                     <td><?= $article->volume_name ?></td>
-                    <td><?= strlen($article->title) > 70 ? substr($article->title, 0, 70) . '...' : $article->title ?></td>
+                    <td><?= $article->title ?></td>
                     <td>
                         <?php if ($article->filename): ?>
                             <a href="<?= base_url('files/' . $article->filename); ?>" class="file-link"><i class="fa fa-download" aria-hidden="true" title="Download File"></i></a>

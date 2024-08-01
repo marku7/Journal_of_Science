@@ -48,6 +48,22 @@ class Pages extends Base_Controller {
         } else {
             show_404();
         }
+    }   
+    
+    public function viewArticle($articleid) {
+        $user_id = $this->session->userdata('UserLoginSession')['userid'] ?? null;
+        if ($user_id) {
+            $userData = $this->User_model->select_user_by_id($user_id);
+            $info['userData'] = $userData;
+            
+            // Fetch the article details
+            $article = $this->Article_model->get_article_by_id2($articleid);
+            $info['articleData'] = $article;
+    
+            $this->load_view2('viewArticle', $info);
+        } else {
+            show_404();
+        }
     }
     
 
@@ -110,8 +126,6 @@ class Pages extends Base_Controller {
             show_404();
         }
     }
-    
-    
 
     public function db_authArticles($page = 'db_authArticles') {
         $user_id = $this->session->userdata('UserLoginSession')['userid'] ?? null;
@@ -280,6 +294,21 @@ class Pages extends Base_Controller {
     }
 
     public function db_AdminUpdate($slug, $page = 'pages/db_AdminUpdate') {
+        $this->load->model('Volume_model');
+        $volumes = $this->Volume_model->getVolumes();
+    
+        $this->load->model('Article_model');
+        $article = $this->Article_model->editArticle($slug);
+    
+        $data['volumes'] = $volumes;
+        $data['article'] = $article;
+    
+        $this->load->view('templates/headerAdmin');
+        $this->load->view($page, $data);
+        $this->load->view('templates/footerAdmin');
+    }
+
+    public function db_AdminUpdateV($slug, $page = 'pages/db_AdminUpdateV') {
         $this->load->model('Volume_model');
         $volumes = $this->Volume_model->getVolumes();
     
@@ -537,6 +566,72 @@ class Pages extends Base_Controller {
             return $this->db_AdminUpdate($slug); // Correct method name for redirecting to the update page
         }
     }
+
+    public function updateNowV($slug) {
+        $this->form_validation->set_rules('title', 'Title', 'required');
+        $this->form_validation->set_rules('keywords', 'Keywords', 'required');
+        $this->form_validation->set_rules('abstract', 'Abstract', 'required');
+        $this->form_validation->set_rules('volume_id', 'Volume', 'required');
+    
+        if ($this->form_validation->run()) {
+            $previous_file = $this->input->post('previous_file');
+            $config = [
+                'upload_path' => "./files/",
+                'allowed_types' => "pdf",
+                'file_name' => time() . "-" . str_replace(' ', '-', $_FILES["new_file"]["name"]),
+            ];
+    
+            if (!empty($_FILES["new_file"]["name"])) {
+                $this->load->library('upload', $config);
+    
+                if ($this->upload->do_upload('new_file')) {
+                    if (!empty($previous_file) && file_exists("./files/" . $previous_file)) {
+                        unlink("./files/" . $previous_file);
+                    }
+                } else {
+                    $error = $this->upload->display_errors();
+                    $this->session->set_flashdata('error', $error);
+                    redirect(base_url('pages/db_AdminUpdate/' . $slug));
+                }
+            }
+    
+            $data = array(
+                'title' => $this->input->post('title'),
+                'keywords' => $this->input->post('keywords'),
+                'abstract' => $this->input->post('abstract'),
+                'volumeid' => $this->input->post('volume_id'), // Add volume_id here
+            );
+    
+            if (!empty($_FILES["new_file"]["name"])) {
+                $data['filename'] = $config['file_name'];
+            }
+    
+            $this->Article_model->updateArticle($data, $slug);
+    
+            // Update article_submission table
+            $submission_data = array(
+                'title' => $this->input->post('title'),
+                'filename' => (!empty($_FILES["new_file"]["name"])) ? $config['file_name'] : null,
+                'volume_id' => $this->input->post('volume_id') // Add volume_id here
+            );
+    
+            $article = $this->Article_model->getArticleBySlug($slug); // Ensure this method exists in your model
+            $articleid = $article->articleid;
+    
+            // Update article_submission table
+            $submission_id = $this->Article_model->getSubmissionIdBySlug($slug);
+    
+            if ($submission_id) {
+                $this->Article_model->updateArticleSubmission($submission_data, $submission_id);
+            }
+    
+            $this->session->set_flashdata('success', 'Updating Successful!');
+            redirect(base_url('pages/viewArticle/' . $articleid)); // Redirect to viewArticle page using articleid
+        } else {
+            return $this->db_AdminUpdate($slug); // Correct method name for redirecting to the update page
+        }
+    }
+      
     
     public function updateNow4($slug) {
         $this->form_validation->set_rules('title', 'Title', 'required');
@@ -740,6 +835,16 @@ class Pages extends Base_Controller {
     public function unPublishArticle($articleid) {
         $this->Article_model->unPublishArticle($articleid);
         redirect('pages/db_allArticles');
+    }
+
+    public function publishArticleV($articleid) {
+        $this->Article_model->publishArticle($articleid);
+        redirect('pages/viewArticle/' . $articleid);
+    }
+
+    public function unPublishArticleV($articleid) {
+        $this->Article_model->unPublishArticle($articleid);
+        redirect('pages/viewArticle/' . $articleid);
     }
     
     

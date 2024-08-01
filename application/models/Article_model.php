@@ -72,6 +72,26 @@ public function get_articles_by_volume($volumeid) {
     return $query->result_array();
 }
 
+public function get_article_by_id2($articleid) {
+    $this->db->select('
+        articles.articleid,
+        articles.title,
+        articles.keywords,
+        articles.abstract,
+        articles.slug,
+        articles.isPublished,
+        articles.doi,
+        articles.filename,
+        articles.created_at,
+        articles.author,
+        volume.vol_name
+    ');
+    $this->db->from('articles');
+    $this->db->join('volume', 'articles.volumeid = volume.volumeid', 'left');
+    $this->db->where('articles.articleid', $articleid);
+    $query = $this->db->get();
+    return $query->row();
+}
 
 public function get_article() {
     $this->db->select('
@@ -220,6 +240,12 @@ public function getSubmittedArticlesByUserId($user_id) {
 public function getArticle() {
     $query = $this->db->get('articles');
     return $query->result();
+}
+
+public function getArticleBySlug($slug) {
+    $this->db->where('slug', $slug);
+    $query = $this->db->get('articles');
+    return $query->row();
 }
 
 public function updateArticle($data, $slug) {
