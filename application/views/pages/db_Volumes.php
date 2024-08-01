@@ -104,7 +104,23 @@
                             <?php endif; ?>
                         </td>
                         <td><?php echo $volume->vol_name; ?></td>
-                        <td><?php echo $volume->description; ?></td>
+                        <td>
+                        <?php
+                        $description = $volume->description;
+                        $limit = 100; // Number of characters to display
+
+                        if (strlen($description) > $limit) {
+                            $short_description = substr($description, 0, $limit) . '... <a href="#" class="read-more">Read More</a>';
+                            ?>
+                            <span class="description" data-full="<?php echo htmlspecialchars($description, ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php echo $short_description; ?>
+                            </span>
+                            <?php
+                        } else {
+                            echo $description;
+                        }
+                        ?>
+                    </td>
                         <td><?php echo $volume->date_at; ?></td>
                         <td><?php echo $volume->date_published; ?></td>
                         <td class="action-links">
@@ -118,4 +134,16 @@
         <a href="<?php echo base_url('volume/db_createVolumes'); ?>" class="btn btn-create">Create New Volume</a>
     </div>
 </body>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.read-more').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            var span = this.parentElement;
+            var fullDescription = span.getAttribute('data-full');
+            span.innerHTML = fullDescription;
+        });
+    });
+});
+</script>
 </html>
