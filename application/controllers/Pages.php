@@ -267,10 +267,6 @@ class Pages extends Base_Controller {
         }
     }
     
-    
-    
-    
-
     public function edit_article($aricleId, $page = 'pages/edit_article') {
         $this->load->view('templates/headerAdmin');
     }
