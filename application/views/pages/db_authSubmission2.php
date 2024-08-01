@@ -75,37 +75,6 @@
             margin-bottom: 10px;
         }
     </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const authorDropdown = document.getElementById("selectedAuthor");
-            const authorTextarea = document.getElementById("author");
-
-            authorDropdown.addEventListener("change", function() {
-                const selectedOption = authorDropdown.options[authorDropdown.selectedIndex];
-                const authorName = selectedOption.text;
-                
-                if (authorName !== "Select Author") {
-                    // Append the selected author's name to the textarea
-                    if (authorTextarea.value) {
-                        authorTextarea.value += ", " + authorName;
-                    } else {
-                        authorTextarea.value = authorName;
-                    }
-                    
-                    // Reset the dropdown
-                    authorDropdown.selectedIndex = 0;
-                }
-            });
-
-            // Optional: Add functionality for Enter key in textarea
-            authorTextarea.addEventListener("keydown", function(event) {
-                if (event.key === "Enter") {
-                    event.preventDefault();
-                    authorTextarea.value += ", ";
-                }
-            });
-        });
-    </script>
 </head>
 <body>
 <div class="container">
@@ -128,7 +97,6 @@
             <?php endforeach; ?>
         </select>
 
-        <!-- Dropdown to select an author -->
         <label for="selectedAuthor">Select Author:</label>
         <select id="selectedAuthor" name="selected_author" class="form-control">
             <option value="">Select Author</option>
@@ -149,42 +117,50 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const numAuthorsInput = document.getElementById('numAuthors');
-        const coAuthorsContainer = document.getElementById('coAuthorsContainer');
+    document.addEventListener("DOMContentLoaded", function() {
+        const authorDropdown = document.getElementById("selectedAuthor");
+        const authorTextarea = document.getElementById("author");
+        const allAuthors = Array.from(authorDropdown.options).map(option => option.text).slice(1);
 
-        function updateCoAuthorFields() {
-            const numAuthors = parseInt(numAuthorsInput.value, 10);
-            const currentFields = coAuthorsContainer.querySelectorAll('.co-author-field');
+        function updateDropdown() {
+            const authorsInTextarea = authorTextarea.value.toLowerCase().split(',').map(author => author.trim());
             
-            // Remove existing fields
-            currentFields.forEach(field => field.remove());
+            authorDropdown.innerHTML = '<option value="">Select Author</option>';
             
-            // Add new fields
-            for (let i = 1; i < numAuthors; i++) { // Start from 1 because the first author is the one who posted
-                const coAuthorField = document.createElement('div');
-                coAuthorField.className = 'co-author-field';
-                coAuthorField.innerHTML = `
-                    <label for="coauthor${i}">Co-author ${i}:</label>
-                    <select id="coauthor${i}" name="coauthor_id[]" class="form-control" required>
-                        <option value="">Select Co-author</option>
-                        <?php foreach ($authors as $author): ?>
-                            <option value="<?php echo $author['audid']; ?>"><?php echo $author['author_name']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                `;
-                coAuthorsContainer.appendChild(coAuthorField);
-            }
+            allAuthors.forEach(authorName => {
+                if (!authorsInTextarea.includes(authorName.toLowerCase())) {
+                    const option = document.createElement('option');
+                    option.text = authorName;
+                    authorDropdown.add(option);
+                }
+            });
         }
 
-        numAuthorsInput.addEventListener('input', function() {
-            if (parseInt(numAuthorsInput.value, 10) > 50) {
-                numAuthorsInput.value = 50;
+        authorDropdown.addEventListener("change", function() {
+            const selectedOption = authorDropdown.options[authorDropdown.selectedIndex];
+            const authorName = selectedOption.text;
+            
+            if (authorName !== "Select Author") {
+                if (authorTextarea.value) {
+                    authorTextarea.value += ", " + authorName;
+                } else {
+                    authorTextarea.value = authorName;
+                }
+                authorDropdown.selectedIndex = 0;
+                updateDropdown();
             }
-            updateCoAuthorFields();
         });
 
-        updateCoAuthorFields();
+        authorTextarea.addEventListener("input", updateDropdown);
+
+        authorTextarea.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                authorTextarea.value += ", ";
+            }
+        });
+
+        updateDropdown();
     });
 </script>
 </body>

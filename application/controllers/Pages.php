@@ -295,7 +295,11 @@ class Pages extends Base_Controller {
     
         $this->load->model('Article_model');
         $article = $this->Article_model->editArticle($slug);
-    
+
+        $this->load->model('Author_model');
+        $authors = $this->Author_model->get_authors();
+
+        $data['authors'] = $authors;
         $data['volumes'] = $volumes;
         $data['article'] = $article;
     
@@ -310,7 +314,10 @@ class Pages extends Base_Controller {
     
         $this->load->model('Article_model');
         $article = $this->Article_model->editArticle($slug);
-    
+        $this->load->model('Author_model');
+        $authors = $this->Author_model->get_authors();
+        
+        $data['authors'] = $authors;
         $data['volumes'] = $volumes;
         $data['article'] = $article;
     
@@ -506,6 +513,7 @@ class Pages extends Base_Controller {
         $this->form_validation->set_rules('keywords', 'Keywords', 'required');
         $this->form_validation->set_rules('abstract', 'Abstract', 'required');
         $this->form_validation->set_rules('volume_id', 'Volume', 'required');
+        $this->form_validation->set_rules('author', 'Author', 'required');
     
         if ($this->form_validation->run()) {
             $previous_file = $this->input->post('previous_file');
@@ -533,7 +541,8 @@ class Pages extends Base_Controller {
                 'title' => $this->input->post('title'),
                 'keywords' => $this->input->post('keywords'),
                 'abstract' => $this->input->post('abstract'),
-                'volumeid' => $this->input->post('volume_id'), // Add volume_id here
+                'volumeid' => $this->input->post('volume_id'),
+                'author' => $this->input->post('author'),
             );
     
             if (!empty($_FILES["new_file"]["name"])) {
@@ -546,7 +555,8 @@ class Pages extends Base_Controller {
             $submission_data = array(
                 'title' => $this->input->post('title'),
                 'filename' => (!empty($_FILES["new_file"]["name"])) ? $config['file_name'] : null,
-                'volume_id' => $this->input->post('volume_id') // Add volume_id here
+                'volume_id' => $this->input->post('volume_id'),
+                'author' => $this->input->post('author')
             );
     
             // Get submission id based on slug
@@ -568,6 +578,8 @@ class Pages extends Base_Controller {
         $this->form_validation->set_rules('keywords', 'Keywords', 'required');
         $this->form_validation->set_rules('abstract', 'Abstract', 'required');
         $this->form_validation->set_rules('volume_id', 'Volume', 'required');
+        $this->form_validation->set_rules('author', 'Author', 'required');
+    
     
         if ($this->form_validation->run()) {
             $previous_file = $this->input->post('previous_file');
@@ -595,7 +607,8 @@ class Pages extends Base_Controller {
                 'title' => $this->input->post('title'),
                 'keywords' => $this->input->post('keywords'),
                 'abstract' => $this->input->post('abstract'),
-                'volumeid' => $this->input->post('volume_id'), // Add volume_id here
+                'volumeid' => $this->input->post('volume_id'),
+                'author' => $this->input->post('author')
             );
     
             if (!empty($_FILES["new_file"]["name"])) {
@@ -608,7 +621,8 @@ class Pages extends Base_Controller {
             $submission_data = array(
                 'title' => $this->input->post('title'),
                 'filename' => (!empty($_FILES["new_file"]["name"])) ? $config['file_name'] : null,
-                'volume_id' => $this->input->post('volume_id') // Add volume_id here
+                'volume_id' => $this->input->post('volume_id'),
+                'author' => $this->input->post('author')
             );
     
             $article = $this->Article_model->getArticleBySlug($slug); // Ensure this method exists in your model

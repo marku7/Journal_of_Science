@@ -13,7 +13,7 @@
         }
         .container {
             max-width: 600px;
-            margin: 20px auto;
+            margin: 40px auto;
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
@@ -21,49 +21,58 @@
         }
         h2 {
             margin-top: 0;
-            text-align: center; /* Center align the heading */
+            color: #333;
+            text-align: center;
         }
         label {
             display: block;
             margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
         }
-        input[type="text"], input[type="email"], textarea {
+        input[type="text"], input[type="email"], textarea, input[type="file"], select {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+            font-size: 16px;
         }
         textarea {
             height: 150px;
+            resize: vertical;
         }
-        .cancel-button {
-            background-color: #FF5733;
-            color: white;
+        .btn {
             padding: 10px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            display: inline-block; /* Display as inline-block to align with submit button */
+            font-size: 16px;
+            display: inline-block;
+            margin-top: 10px;
         }
-
-        .cancel-button:hover {
-            background-color: #E5492F;
-        }
-
-        input[type="submit"] {
+        .btn-primary {
             background-color: #4CAF50;
             color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            display: inline-block; /* Display as inline-block to align with cancel button */
         }
-
-        input[type="submit"]:hover {
+        .btn-primary:hover {
             background-color: #45a049;
+        }
+        .btn-secondary {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #da190b;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+        .co-author-field {
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -79,12 +88,27 @@
             
             <label for="abstract">Abstract:</label>
             <textarea id="editor1" name="abstract" required><?= isset($article) ? $article->abstract : ''; ?></textarea>
+            
             <label for="volume">Select Volume:</label>
-    <select id="volume" name="volume_id" class="form-control" required>
-        <?php foreach ($volumes as $volume): ?>
-            <option value="<?php echo $volume['volumeid']; ?>"><?php echo $volume['vol_name']; ?></option>
-        <?php endforeach; ?>
-    </select>
+            <select id="volume" name="volume_id" class="form-control" required>
+                <?php foreach ($volumes as $volume): ?>
+                    <option value="<?php echo $volume['volumeid']; ?>" <?= isset($article) && $article->volume_id == $volume['volumeid'] ? 'selected' : ''; ?>>
+                        <?php echo $volume['vol_name']; ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            
+            <label for="selectedAuthor">Select Author:</label>
+            <select id="selectedAuthor" name="selected_author" class="form-control">
+                <option value="">Select Author</option>
+                <?php foreach ($authors as $author): ?>
+                    <option value="<?php echo $author['audid']; ?>"><?php echo $author['author_name']; ?></option>
+                <?php endforeach; ?>
+            </select>
+
+            <label for="author">Author/s:</label>
+            <textarea id="author" name="author" class="form-control" rows="5" style="resize: vertical;" required><?= isset($article) ? $article->author : ''; ?></textarea>
+            
             <label for="file">Previous File:</label>
             <input type="text" id="previous_file" value="<?= isset($article) ? $article->filename : ''; ?>" readonly>
 
@@ -96,9 +120,57 @@
             <br>
             
             <button type="submit" name="articleUpdate" class="btn btn-primary px-4">Update</button>
-            <button type="button" class="cancel-button" onclick="window.location.href='<?php echo base_url('pages/db_allArticles')?>'">Cancel</button>
-
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='<?php echo base_url('pages/db_allArticles')?>'">Cancel</button>
         </form>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const authorDropdown = document.getElementById("selectedAuthor");
+            const authorTextarea = document.getElementById("author");
+            const allAuthors = Array.from(authorDropdown.options).map(option => option.text).slice(1);
+
+            function updateDropdown() {
+                const authorsInTextarea = authorTextarea.value.split(',').map(author => author.trim());
+                
+                authorDropdown.innerHTML = '<option value="">Select Author</option>';
+                
+                allAuthors.forEach(authorName => {
+                    if (!authorsInTextarea.includes(authorName.toLowerCase())) {
+                        const option = document.createElement('option');
+                        option.text = authorName;
+                        authorDropdown.add(option);
+                    }
+                });
+            }
+
+            function removeSelectedOption() {
+                const selectedOption = authorDropdown.options[authorDropdown.selectedIndex];
+                const authorName = selectedOption.text;
+                
+                if (authorName !== "Select Author") {
+                    if (authorTextarea.value) {
+                        authorTextarea.value += ", " + authorName;
+                    } else {
+                        authorTextarea.value = authorName;
+                    }
+                    
+                    updateDropdown();
+                }
+            }
+
+            authorDropdown.addEventListener("change", removeSelectedOption);
+
+            authorTextarea.addEventListener("input", updateDropdown);
+
+            authorTextarea.addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    authorTextarea.value += ", ";
+                }
+            });
+            
+            updateDropdown();
+        });
+    </script>
 </body>
 </html>
