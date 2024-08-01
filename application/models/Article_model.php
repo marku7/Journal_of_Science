@@ -104,6 +104,7 @@ public function get_article() {
         volume.volumeid,
         articles.doi,
         articles.isPublished,
+        articles.author,
         articles.keywords
     ');
     $this->db->from('articles');

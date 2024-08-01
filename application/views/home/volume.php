@@ -10,6 +10,15 @@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url('css/home/styles.css'); ?>" rel="stylesheet" />
+    <style>
+        .volume-description {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
@@ -49,8 +58,13 @@
     </header>
     <div class="container px-4 px-lg-5">
         <h2><?php echo $volume['vol_name']; ?></h2>
+        <div class="volume-description">
+            <p><?php echo $volume['description']; ?></p>
+        </div>
+
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
+                <h5>Article/s</h5> <hr>
                 <?php if (!empty($articles)): ?>
                     <?php foreach ($articles as $article): ?>
                         <div class="post-preview">
